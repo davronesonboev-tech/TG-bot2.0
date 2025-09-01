@@ -46,7 +46,7 @@ class BotConfig:
     MAX_TASKS_PER_PAGE: int = 5
 
     # Часовой пояс отображения (сдвиг в часах относительно UTC)
-    DISPLAY_TZ_OFFSET_HOURS: int = int(os.getenv("TZ_OFFSET_HOURS", "0"))
+    DISPLAY_TZ_OFFSET_HOURS: int = int(os.getenv("TZ_OFFSET_HOURS", "5"))
 
 # Глобальная конфигурация
 config = BotConfig()
