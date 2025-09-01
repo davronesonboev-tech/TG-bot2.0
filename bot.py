@@ -28,7 +28,7 @@ from telegram.ext import (
 from config import config, EMOJIS, TASK_STATUS, TASK_PRIORITY, USER_ROLES
 from database import db
 from auth import AuthManager
-from utils import format_task, format_datetime, validate_deadline, to_utc
+from utils import format_task, format_datetime, validate_deadline, to_utc, get_current_tashkent_time
 from notifications import NotificationManager
 from reports import ReportGenerator
 
@@ -566,7 +566,7 @@ class TaskManagerBot:
                                 f"🎉 **ЗАДАЧА ВЫПОЛНЕНА!**\n\n"
                                 f"📝 **Задача:** {updated_task['title']}\n"
                                 f"👤 **Исполнитель:** {db_user['first_name']} {db_user['last_name']}\n"
-                                f"⏰ **Время выполнения:** {format_datetime(datetime.now())}\n"
+                                f"⏰ **Время выполнения:** {format_datetime(get_current_tashkent_time())}\n"
                                 f"📊 **Статус:** {TASK_STATUS[new_status]}\n\n"
                                 f"Отличная работа! 👏"
                             )
@@ -707,13 +707,13 @@ class TaskManagerBot:
         
         deadline = None
         if query.data == "deadline_1d":
-            deadline = to_utc(datetime.now() + timedelta(days=1))
+            deadline = to_utc(get_current_tashkent_time() + timedelta(days=1))
         elif query.data == "deadline_3d":
-            deadline = to_utc(datetime.now() + timedelta(days=3))
+            deadline = to_utc(get_current_tashkent_time() + timedelta(days=3))
         elif query.data == "deadline_7d":
-            deadline = to_utc(datetime.now() + timedelta(days=7))
+            deadline = to_utc(get_current_tashkent_time() + timedelta(days=7))
         elif query.data == "deadline_30d":
-            deadline = to_utc(datetime.now() + timedelta(days=30))
+            deadline = to_utc(get_current_tashkent_time() + timedelta(days=30))
         elif query.data == "deadline_none":
             deadline = None
         elif query.data == "deadline_manual":
@@ -1050,7 +1050,7 @@ class TaskManagerBot:
                 await query.message.reply_text("📝 У вас пока нет задач для отчёта")
                 return
             
-            filename = f"my_tasks_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            filename = f"my_tasks_report_{get_current_tashkent_time().strftime('%Y%m%d_%H%M%S')}.xlsx"
             report_path = self.report_generator.create_excel_report(tasks, filename)
             
             await query.message.reply_document(
