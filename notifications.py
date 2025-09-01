@@ -12,7 +12,7 @@ from telegram.error import TelegramError
 
 from config import config, EMOJIS
 from database import db
-from utils import format_task, format_datetime
+from utils import format_task, format_datetime, get_current_tashkent_time
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ class NotificationManager:
                         task_id=task['id'],
                         notification_type='deadline',
                         message=message,
-                        scheduled_at=datetime.now()
+                        scheduled_at=get_current_tashkent_time()
                     )
                     # Отправляем немедленно и помечаем отправленным
                     await self.send_notification(
@@ -266,7 +266,7 @@ class NotificationManager:
         
         message = (
             f"{EMOJIS['reports']} **ЕЖЕНЕДЕЛЬНЫЙ ОТЧЁТ**\n\n"
-            f"📅 **Период:** {format_datetime(week_ago, show_time=False)} - {format_datetime(datetime.now(), show_time=False)}\n\n"
+            f"📅 **Период:** {format_datetime(week_ago, show_time=False)} - {format_datetime(get_current_tashkent_time(), show_time=False)}\n\n"
             f"📊 **Общая статистика:**\n"
             f"• Всего задач: {user_stats['total_tasks']}\n"
             f"• Выполнено: {user_stats['completed_tasks']}\n"
