@@ -18,7 +18,7 @@ from plotly.subplots import make_subplots
 
 from config import config, TASK_STATUS, TASK_PRIORITY
 from database import db
-from utils import format_datetime
+from utils import format_datetime, get_current_tashkent_time
 
 # Настройка для поддержки русского языка в matplotlib
 plt.rcParams['font.family'] = ['DejaVu Sans', 'Liberation Sans', 'Arial Unicode MS']
@@ -45,7 +45,7 @@ class ReportGenerator:
             Путь к созданному файлу
         """
         if not filename:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = get_current_tashkent_time().strftime("%Y%m%d_%H%M%S")
             filename = f"task_report_{timestamp}.xlsx"
         
         filepath = os.path.join(config.EXPORT_FOLDER, filename)
@@ -101,7 +101,7 @@ class ReportGenerator:
             Путь к созданному файлу
         """
         if not filename:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = get_current_tashkent_time().strftime("%Y%m%d_%H%M%S")
             filename = f"gantt_chart_{timestamp}.png"
         
         filepath = os.path.join(config.CHARTS_FOLDER, filename)
@@ -132,7 +132,7 @@ class ReportGenerator:
             if task['completed_at']:
                 end_date = datetime.fromisoformat(task['completed_at'].replace('Z', '+00:00'))
             else:
-                end_date = min(deadline, datetime.now())
+                end_date = min(deadline, get_current_tashkent_time())
             
             gantt_data.append({
                 'task': task['title'][:30] + ('...' if len(task['title']) > 30 else ''),
@@ -221,7 +221,7 @@ class ReportGenerator:
     def create_user_performance_chart(self, user_id: int = None, filename: str = None) -> str:
         """Создание графика производительности пользователя"""
         if not filename:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = get_current_tashkent_time().strftime("%Y%m%d_%H%M%S")
             filename = f"user_performance_{timestamp}.png"
         
         filepath = os.path.join(config.CHARTS_FOLDER, filename)
@@ -293,7 +293,7 @@ class ReportGenerator:
     def create_status_distribution_chart(self, tasks: List[Dict], filename: str = None) -> str:
         """Создание круговой диаграммы распределения статусов"""
         if not filename:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = get_current_tashkent_time().strftime("%Y%m%d_%H%M%S")
             filename = f"status_distribution_{timestamp}.png"
         
         filepath = os.path.join(config.CHARTS_FOLDER, filename)
