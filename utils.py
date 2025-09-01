@@ -17,6 +17,12 @@ def _to_local_time(dt: datetime) -> datetime:
     target_tz = timezone(timedelta(hours=config.DISPLAY_TZ_OFFSET_HOURS))
     return dt.astimezone(target_tz)
 
+def get_current_tashkent_time() -> datetime:
+    """Получить текущее время в Ташкенте (UTC+5)"""
+    utc_now = datetime.utcnow().replace(tzinfo=timezone.utc)
+    tashkent_tz = timezone(timedelta(hours=config.DISPLAY_TZ_OFFSET_HOURS))
+    return utc_now.astimezone(tashkent_tz).replace(tzinfo=None)
+
 def to_utc(dt: datetime) -> Optional[datetime]:
     """Конвертировать локальное время (по DISPLAY_TZ_OFFSET_HOURS) в UTC (naive)."""
     if not dt:
@@ -148,12 +154,13 @@ def validate_deadline(deadline_str: str) -> Optional[datetime]:
     deadline_str = deadline_str.lower().strip()
     
     # "через X дней/часов/минут"
+    current_time = get_current_tashkent_time()
     patterns = [
-        (r'через (\d+) дн', lambda x: datetime.now() + timedelta(days=int(x))),
-        (r'через (\d+) ч', lambda x: datetime.now() + timedelta(hours=int(x))),
-        (r'через (\d+) мин', lambda x: datetime.now() + timedelta(minutes=int(x))),
-        (r'завтра', lambda x: datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=1)),
-        (r'послезавтра', lambda x: datetime.now().replace(hour=23, minute=59, second=59) + timedelta(days=2)),
+        (r'через (\d+) дн', lambda x: current_time + timedelta(days=int(x))),
+        (r'через (\d+) ч', lambda x: current_time + timedelta(hours=int(x))),
+        (r'через (\d+) мин', lambda x: current_time + timedelta(minutes=int(x))),
+        (r'завтра', lambda x: current_time.replace(hour=23, minute=59, second=59) + timedelta(days=1)),
+        (r'послезавтра', lambda x: current_time.replace(hour=23, minute=59, second=59) + timedelta(days=2)),
     ]
     
     for pattern, func in patterns:
@@ -246,7 +253,7 @@ def is_valid_telegram_username(username: str) -> bool:
 def format_duration(start_time: datetime, end_time: datetime = None) -> str:
     """Форматирование продолжительности"""
     if not end_time:
-        end_time = datetime.now()
+        end_time = get_current_tashkent_time()
     
     duration = end_time - start_time
     
